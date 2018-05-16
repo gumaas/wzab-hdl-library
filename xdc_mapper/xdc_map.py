@@ -11,6 +11,7 @@ License: PUBLIC DOMAIN of CC0 (whatever is more convenient for you)
 """
 
 import csv
+import regex
 
 def read_csv(fname,cols):
     """
@@ -52,4 +53,35 @@ def make(filename, dicts):
         fxdc.write("set_property PACKAGE_PIN %s [get_ports {%s}]\n" % (key, pin))
     fxdc.close()  
 
-#
+def replace_right(source, target, replacement, replacements=None):
+    return replacement.join(source.rsplit(target, replacements))
+
+def make_bus(pinname, idx_offset = 0):
+
+    # [name, nr, postfix] = re.match( r"(.*?)(\d+)(.*)", pinname).groups()
+    # we want to use the last group of digits as bus index
+    # multi digit groups must be supported
+
+    # I split a string into 3 groups: name, index and postfix
+    # name and index must have more then 1 char (+)
+    #   and may contain any characters (.)
+    # postfix is optional (*)
+    # in order to make sure that last digit group will be matched as index 
+    #   I use reverse parsing - right to left ((?r))
+    # parsing from right regexp matches postfix first
+    #   by default it would match as much characters as possible, 
+    #   as long as other two brackets are fulfilled
+    #   I'm changing this behaviour by using (?) - non-greedy version
+
+    [name, nr, postfix] = regex.match( r"(?r)(.+)(\d+)(.*?)", pinname).groups()
+
+    if postfix != '':
+        postfix = '_'+postfix
+
+    s = '{name}{postfix}[{id}]'.format(
+            name=replace_right(name,'_','',1),
+            postfix=replace_right(postfix,'_','',1),
+            id=str(int(nr)+idx_offset)
+        )
+
+    return s

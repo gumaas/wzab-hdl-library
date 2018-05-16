@@ -8,7 +8,9 @@ from xdc_map import *
 dicts=[]
 
 dicts.append(read_csv('fmc_rj45.csv',(
-    [1,],
+    [1,lambda x: make_bus(x)],
+    # [1,lambda x: print(x)],
+    # [1],
     [2,lambda x: x.replace("_CC","")]
 )))
 
@@ -18,6 +20,8 @@ dicts.append(read_csv('pinout.csv',(
         [2,lambda x: x.replace("LA1_","").replace("HA1_","").replace("HB1_","").replace("_CC","")],
         [0  ,],
 )))
+
+
 
 make("fmc_rj45_on_afck_fmc2.xdc", dicts)
 
