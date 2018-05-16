@@ -85,3 +85,11 @@ def make_bus(pinname, idx_offset = 0):
         )
 
     return s
+
+def make_bus_pattern( pattern, pinname):
+    for k, v in pattern.items():
+        if k in pinname:
+            return make_bus(pinname, v)
+
+    else:
+        return pinname

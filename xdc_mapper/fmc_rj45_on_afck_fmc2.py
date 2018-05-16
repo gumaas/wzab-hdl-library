@@ -7,8 +7,12 @@ from xdc_map import *
 
 dicts=[]
 
+bus_patterns = {"RJ45":-1,
+                "LED":-1}
+
 dicts.append(read_csv('fmc_rj45.csv',(
-    [1,lambda x: make_bus(x)],
+    [1,lambda x: make_bus_pattern(bus_patterns,x)],
+    # [1,lambda x: make_bus_pattern(make_bus_pattern("LED", x, -1), "RJ45",x,-1)],
     # [1,lambda x: print(x)],
     # [1],
     [2,lambda x: x.replace("_CC","")]
